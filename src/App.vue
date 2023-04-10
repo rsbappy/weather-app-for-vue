@@ -1,5 +1,6 @@
 <script setup>
-
+import { useWeatherStore } from './stores/weather';
+const weatherStore = useWeatherStore();
 </script>
 
 <template>
@@ -9,19 +10,25 @@
 
       <!-- search box for laction -->
       <div class="search-box">
-        <input type="text" placeholder="Search ...." class="search-bar">
+        <input type="text" placeholder="Search ...." class="search-bar" v-model="weatherStore.location_query" @keypress="weatherStore.fetchWeather">
+         
       </div>
 
       <!-- weather information -->
-      <div class="weather-info">
+      <div class="weather-info" v-if="weatherStore.weather.main != undefined">
         <div class="location-box">
-          <div class="location">Dhaka</div>
-          <div class="date">17-3-23</div>
+          <div class="location">{{ weatherStore.weather.name }}, {{ weatherStore.weather.sys.country }}</div>
+          <div class="date">{{new Date().toLocaleString()}}</div>
         </div>
         <div class="weather-box">
-          <div class="temp">22 c</div>
-          <div class="weather">dsdsfs</div>
+          <div class="temp">{{weatherStore.weather.main.temp}}  °C </div>
+          <div class="weather">{{weatherStore.weather.weather[0].main}}</div>
+          <div class="icon"><img :src="`https://openweathermap.org/img/wn/${weatherStore.weather.weather[0].icon}@2x.png`"></div>
+          <div class="other-info">
+            <p> pressure: {{weatherStore.weather.main.pressure}} mb </p>
+            <p> humidity {{weatherStore.weather.main.humidity}}%</p>
 
+          </div>
         </div>
       </div>
     </div>
@@ -50,7 +57,7 @@
 
   }
   .wrap{
-    height: 600px;
+    height: 700px;
     padding: 25px;
     border-radius: 25px;
     background-image: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.4));
@@ -122,4 +129,13 @@
     text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
 
   }
+.other-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  color: white;
+}
+
+
 </style>
